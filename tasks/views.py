@@ -19,6 +19,10 @@ def signupuser(request):
         return render(request,'tasks/signupuser.html',{'form':UserCreationForm()})
     else:
         #creating a user
+        if request.POST['username'] == "":
+            return render(request,'tasks/signupuser.html',{'form':UserCreationForm(),'error':"Please enter a valid username"})
+
+
         if request.POST['password1'] == request.POST['password2']:
             try:
                 user=User.objects.create_user(request.POST['username'],password=request.POST['password1'])
@@ -27,7 +31,6 @@ def signupuser(request):
                 return redirect('currenttasks')
             except IntegrityError:
                 return render(request,'tasks/signupuser.html',{'form':UserCreationForm(),'error':"Username already exists.Choose a new username"})
-
         else:
             #tell user that passwords didn't match
             return render(request,'tasks/signupuser.html',{'form':UserCreationForm(),'error':"Passwords did not match"})
